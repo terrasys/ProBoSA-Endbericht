@@ -1,0 +1,30 @@
+\documentclass[
+	fontsize=11pt,
+	twoside,
+	DIV=12,
+	noonlinecaption,
+	titlepage,							
+	bibliography=totoc,						
+	listof=totoc,
+	headsepline,
+	headings=normal]{scrartcl}
+
+\include{control/packages}
+\include{control/layout}
+\begin{document}
+%\begin{linenumbers}
+\include{control/title}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\tableofcontents\newpage
+\listoffigures\newpage      % here, if applicable.
+\listoftables     % List of Tables and List of Figures will be placed
+
+\include{chapter/text}
+\appendix
+\include{chapter/anhang}
+\bibliographystyle{apalike2}  % Here the bibliography 
+\bibliography{references}  % is 
+
+%\end{linenumbers}			 
+\end{document}

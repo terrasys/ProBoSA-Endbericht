@@ -1,0 +1,119 @@
+\section{Programmaufruf der R-Skripte}
+Die Funktionen zur Klassifikation der Zielkategorien werden durch die Datei 
+\texttt{Aufruf\_Klassi"-fi"-ka"-ti"-onen.R} aufgerufen, in der folgende \textbf{Parameter} definiert werden:
+
+\begin{itemize}
+\item \textit{W.DIR} -- Projektordner,
+\item \textit{RU} -- Shape-Datei der Bezugseinheiten ohne Parameter (z.B. \say{bezugseinheiten\_basic.shp}),
+\item \textit{EPSG} -- Projektion (\url{spatialreference.com}),
+\item \textit{RULE.DIR} -- Ordner mit R-Skripten,
+\item \textit{VECTOR.DIR} -- Ordner mit den schichtspezifischen Transformationsergebnissen, 
+\item \textit{RESULT.DIR} -- Ordner mit den Klassifikationsergebnissen,
+\item \textit{source(file.path(W.DIR,RULE.DIR,\say{Pakete.R}))} -- Aufruf der Funktion zum Laden aller notwendigen R-Pakete,
+\item \textit{source(file.path(W.DIR,RULE.DIR,\say{Wichtungen.R}))} -- 
+editierbare Wichtungen
+\end{itemize}
+
+\subparagraph*{Klassifikation}
+Innerhalb der Datei \texttt{Aufruf\_Klassifikationen.R} erfolgt der Aufruf der Klassifikationsroutinen durch folgende Skripte bzw. Befehle: 
+\begin{itemize}
+\item source(file.path(W.DIR,RULE.DIR,\say{Bodenartengruppen.R})) $\Rightarrow$ Aufruf der Bodenartengruppenklassifikation,
+\item source(file.path(W.DIR,RULE.DIR,\say{Bodenartenhauptgruppen.R})) $\Rightarrow$ Aufruf der Bodenartenhauptgruppenklassifikation,
+\item source(file.path(W.DIR,RULE.DIR,\say{Genese.R})) $\Rightarrow$ Aufruf der Geneseklassifikation,
+\item source(file.path(W.DIR,RULE.DIR,\say{Carbonat.R})) $\Rightarrow$ Aufruf der Karbonatklassifikation,
+\item source(file.path(W.DIR,RULE.DIR,\say{Skelett.R})) $\Rightarrow$ Aufruf der Skelettklassifikation,
+\item source(file.path(W.DIR,RULE.DIR,\say{Zusammenfuehrung\_Typen.R})) $\Rightarrow$ Zusammenführung aller typisierten schichtspezifischen Klassifikationsergebnisse in eine Datei.
+\end{itemize}
+
+Jede Klassifikationsroutine verweist auf zwei Unterskripte im Ordner \say{$\dots$/\_rules/}, die (1.) zunächst eine  Klassifikation und anschließend die Zuordnung der Wichtungen zu den Zielklassen vornehmen  sowie (2.) die Klassifikations- und Zuordnungsergebnisse in eine Zeichenfolge zusammenführen:
+\begin{enumerate}
+\item Klassifikation und Zuordnung der Wichtungen
+\begin{itemize}
+\item \texttt{Bodenartengruppen1.R}, 
+\item \texttt{Bodenartenhauptgruppen1.R},
+\item \texttt{Genese1.R},
+\item \texttt{Carbonat1.R} und
+\item \texttt{Skelett1.R} 
+\end{itemize}
+\item Typisierung
+\begin{itemize}
+\item \texttt{Bodenartengruppen2.R}, 
+\item \texttt{Bodenartenhauptgruppen2.R}, 
+\item \texttt{Genese2.R}, 
+\item \texttt{Carbonat2.R} und 
+\item \texttt{Ske"-lett2.R}. 
+\end{itemize}
+\end{enumerate}
+
+Für jede Zielklasse und Datenquelle existiert eine gesonderte Datei, die die Klassifikationsregeln und Wichtungszuordnungen enthält: 
+\begin{itemize}
+\item \say{BAG\_*.R}, 
+\item \say{BAHG\_*.R} 
+\item \say{GEN\_*.R}, 
+\item \say{c\_*.R} und 
+\item \say{s\_*.R}.
+\end{itemize}
+
+Grundsätzlich können drei Klassifikationsarten unterschieden werden:
+\begin{enumerate}
+\item Bei der BAG- bzw. BAHG-Klassifikation werden zunächst numerische Werte (M\,\%) klassifiziert  und danach den Klassen Wichtungen zugeordnet (Tab. \ref{tab:trans-ba}, S. \pageref{tab:trans-ba}).
+\item Das Vorkommen der Genese-Zielklassen wird bereits  spaltenweise als Transformationsergebnis übergeben und im Zuge der Klassifikation um die Wichtungsfaktoren ergänzt (Tab. \ref{tab:trans-gen}, S. \pageref{tab:trans-gen}).
+\item Das Auftreten der Kalk- und Sklettgehaltsstufen wird in stufen- und quellenspezifische Spalten überführt (z.B. \say{s1\_gk}) und dann um die Wichtungsfaktoren ergänzt.
+\end{enumerate}
+
+\subparagraph*{Eingangsdaten}
+Die Eingangsdatensätze sind im Ordner 
+\say{$\dots$/\_data/} zu finden. Dort sind die Transformationsergebnisse jeder Datenquelle abgelegt. Die Benennung der Spalten folgt dem  Prinzip
+\say{[QUELLE]\_[TYP]\_[TRANSFORMATIONSERGEBNIS]}:
+\begin{itemize}
+\item \texttt{QUELLE} $\Rightarrow$ Bodenschätzung (BS), GK\,25 (GK), FSK (F), MMK (M) oder VBK\,50 (V)
+\item \texttt{TYP} $\Rightarrow$ Körnung [M\,\%] (KOE), Genesetyp (GEN), Skelettgehaltsstufe (SKE), Karbonatgehaltsstufe (CAR) 
+\item \texttt{TRANSFORMATIONSERGEBNIS} 
+\begin{itemize}
+\item \say{[BS,GK,F,M,V]\_KOE\_[U,T]}
+\item \say{[F,GK,V]\_GEN\_[F,P,$\dots$]}
+\item \say{[F,V]\_[CAL,SKE]\_STF}
+\end{itemize}
+\end{itemize}
+
+\subparagraph*{Ergebnisdateien}
+Alle Ergebnisse sind im Ordner \say{$\dots$/\_results/} zu finden. Bei jeder Klassifikationsprozedur werden zwei Dateitypen erzeugt:
+
+\begin{enumerate}
+\item \say{\texttt{bezugseinheiten\_[1-20]\_[BAG,BAHG,GEN,SKE,CAR,SKE].csv}} $\Rightarrow$ schichtspezifische Klassifikationszwischenergebnisse 
+
+\begin{itemize}
+\item \textit{Spalten} (vgl. Tab. \ref{tab:trans-ba}, S. \pageref{tab:trans-ba})
+\begin{itemize}
+\item \say{CL\_*} $\Rightarrow$ Zuordnung der Wichtungen zu den Klassen
+\item \say{N\_*} $\Rightarrow$ Anzahl der Klassifikationsquellen pro Zielklasse 
+\item \say{CLASS} $\Rightarrow$  Klassifikation
+\item \say{MS1} $\Rightarrow$ Qualitätsmaß \textit{MS1}
+\item \say{MS2} $\Rightarrow$ Qualitätsmaß \textit{MS2}
+\item \say{N} $\Rightarrow$ Anzahl widersprüchlicher Klassifikationen 
+\item \say{STB} $\Rightarrow$ Qualitätsmaß \textit{STB}
+\item \say{SOURCE} $\Rightarrow$ Quelle der dominierenden Klassifikation 
+\end{itemize}
+\end{itemize}
+\item 
+\say{\texttt{bezugseinheiten\_basic\_[BAG,BAHG,GEN,SKE,CAR,SKE]\_TYP.shp}} $\Rightarrow$ Zusammenfassung der schichtbezogenen Klassifikationsergebnisse (\say{bezugseinheiten\_[1-20]\_[BAG,BAHG, GEN,SKE,CAR,SKE].csv}) 
+\begin{itemize}
+\item \textit{Spalten} (vgl. Tab. \ref{tab:KP-CLASS1}, S. \pageref{tab:KP-CLASS1})
+\begin{itemize}
+\item \say{CLASS\_[1-20]} $\Rightarrow$  schichtbezogene Klassifikation
+\item \say{MS1\_[1-20]} $\Rightarrow$ schichtbezogenes Qualitätsmaß \textit{MS1}
+\item \say{STB\_[1-20]} $\Rightarrow$ schichtbezogenes Qualitätsmaß \textit{STB}
+\item \say{SRC\_[1-20]} $\Rightarrow$ schichtbezogene Klassifikationsquelle
+\item \say{[BAG,BAHG,GEN,SKE,CAL]} $\Rightarrow$ Zeichenkette der schichtbezogenen Klassifikationen
+\item \say{[BAG,BAHG,GEN,SKE,CAL]\_MS1} $\Rightarrow$ Zeichenkette der schichtbezogenen \textit{MS1}-Qualitätsmaße
+\item \say{[BAG,BAHG,GEN,SKE,CAL]\_STB} $\Rightarrow$ Zeichenkette der schichtbezogenen \textit{STB}-Qualitätsmaße
+\item \say{[BAG,BAHG,GEN,SKE,CAL]\_SCR} $\Rightarrow$ Zeichenkette der schichtbezogenen Klassifikationsquellen 
+\end{itemize}
+\end{itemize}
+\end{enumerate}
+
+
+
+
+
+
